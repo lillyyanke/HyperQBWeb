@@ -37,7 +37,7 @@
 
             <h2>Task 1: Lilly</h2>
             <!-- write all your code here! :) -->
-
+            <form id="addForm">
             <!-- Add the model input text box -->
              <label for="modelInput">Model:</label>
              <input type="text" id="modelInput" name="modelInput">
@@ -47,10 +47,13 @@
              <input type="text" id="propertyInput" name="propertyInput">
 
              <!-- Add a button to trigger storing the input -->
-             <button onclick="storeModelAndProperty()">Read</button>
+            <button type="submit">Read</button>
+             <!-- <button onclick="storeModelAndProperty()">Read</button> -->
              <hr>
+            </form>
 
              <!-- This will display the result -->
+            <!-- <div id="output"></div> -->
              <label for="output">Result:</label>
              <textarea id="output" rows="5" cols="50" readonly></textarea>
 
@@ -64,6 +67,35 @@
             <p>Tzu-Han: tzuhan@msu.edu</p>
         </div>
     </div>
-    <script src="main.js"></script>
+    <!-- <script src="main.js"></script> -->
+    
+     <script>
+          document.getElementById('addForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const modelInput = document.getElementById('modelInput').value;
+            const propertyInput = document.getElementById ('propertyInput').value;
+
+            fetch('add.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'modelInput=' + encodeURIComponent(modelInput) + '&propertyInput=' + encodeURIComponent(propertyInput)
+            })  
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('output').innerText = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('output').innerText = `${data.result}`;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('output').innerText = 'An error occurred while processing the request.';
+            });
+          });
+     </script>
 </body>
 </html>

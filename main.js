@@ -14,6 +14,7 @@ function storeModelAndProperty() {
         },
         body: JSON.stringify({modelInput: modelInput, propertyInput: propertyInput}),
     })
+    
     .then(response => response.json())
     .then(data => {
         document.getElementById('output').value = data.result;

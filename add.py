@@ -1,19 +1,4 @@
 import sys
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)
-
-@app.route('/process', methods=['POST'])
-def process():
-    data = request.json
-    model = data.get('modelInput', '')
-    property = data.get('propertyInput', '')
-    
-    result = add_inputs(model, property)
-    
-    return jsonify({'result': result})
 
 def add_inputs(model, property):
     try:
@@ -25,7 +10,12 @@ def add_inputs(model, property):
     return result
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #Get command line arguments
+    num1 = sys.argv[1]
+    num2 = sys.argv[2]
+
+    result = add_inputs(num1, num2)
+    print(result)
 
 
 
