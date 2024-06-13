@@ -6,6 +6,25 @@
     grid-template-columns: repeat(2,1fr);
 }
 
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    margin-bottom: 10px;
+}
+
+.form-row label {
+    min-width: 100px; 
+    flex-shrink: 0; 
+}
+
+.form-row input[type="text"],
+.form-row input[type="file"] {
+    flex: 1; 
+    max-width: 300px; 
+    padding: 5px; 
+}
+
 input[type="text"] {
     margin: 10px 0;
     padding: 5px;
