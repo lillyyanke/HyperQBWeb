@@ -9,18 +9,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Define the expected output file path
     $outputFile = './test/HQ.qcir';
 
-    // Call the Python executable and get its output
-    //$command = './bin/genqbf ' . escapeshellarg($inputArgs);
-    $command = $inputArgs;
-    $binOutput = shell_exec($command);
-    error_log("Command: $command");
-    error_log("Command output: $binOutput");
+    // Call the first executable and get its output
+    $commandGen = './bin/genqbf ' . $inputArgs;
+    $genOutput = shell_exec($commandGen);
+    error_log("Command: $commandGen");
+    error_log("Command output: $genOutput");
     
     // Check if the output file is generated
     if (is_file($outputFile)) {
-        $result = 'File generated successfully: ' . $outputFile;
+        // If the file is generated, run the second command
+        $commandQuabs = './bin/quabs ' . escapeshellarg($outputFile);
+
+        // Execute the quabs command and get its output
+        error_log("Executing second command: $commandQuabs");
+        $quabsOutput = shell_exec($commandQuabs);
+        
+        error_log("Second command output: $quabsOutput");
+        $result = $quabsOutput;
+
     } else {
-        $result = is_null($binOutput) ? 'Error executing command' : 'File not generated';
+        $result = is_null($genOutput) ? 'Error executing command' : 'File not generated';
     }
 
     echo json_encode(['result' => $result]);
