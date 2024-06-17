@@ -88,6 +88,14 @@
             <p>Make input arguments as interface inputs.</p>
 
             <form id="runForm" method="post" enctype="multipart/form-data">
+
+                <!-- test folder number (JUST FOR TESTING) -->
+                <div class="form-row">
+                    <label for="test_folder">Test folder # just for testing purposes:</label>
+                    <input type="text" id="test_folder" name="test_folder">
+                   </div> 
+
+
                 <!--Model 1 init input box for typing input -->
                 <div class="form-row">
                  <label for="model_1_init">Model 1 init:</label>
@@ -110,7 +118,68 @@
                     <!-- File input field for selecting a file -->
                     <label for="model_1_trans_select">Or Select a File:</label>
                     <input type="file" id="model_1_trans_select" name="model_1_trans_select">
-                   </div>                
+                   </div>        
+                   
+                <!--Model 2 init input box for typing input -->
+                <div class="form-row">
+                    <label for="model_2_init">Model 2 init:</label>
+                    <input type="text" id="model_2_init" name="model_2_init">
+                   </div>
+   
+                   <div class="form-row">
+                    <!-- File input field for selecting a file -->
+                    <label for="model_2_init_select">Or Select a File:</label>
+                    <input type="file" id="model_2_init_select" name="model_2_init_select">
+                   </div>
+   
+                   <!--Model 2 trans input box for typing file name -->
+                   <div class="form-row">
+                       <label for="model_2_trans">Model 2 trans:</label>
+                       <input type="text" id="model_2_trans" name="model_2_trans">
+                      </div>
+      
+                      <div class="form-row">
+                       <!-- File input field for selecting a file -->
+                       <label for="model_2_trans_select">Or Select a File:</label>
+                       <input type="file" id="model_2_trans_select" name="model_2_trans_select">
+                      </div>     
+
+                <!-- -k input -->
+                <div class="form-row">
+                    <label for="number_k">K:</label>
+                    <input type="text" id="number_k" name="number_k">
+                   </div>      
+                
+                <!-- -F input -->
+                <div class="form-row">
+                    <label for="quantifier_f">F:</label>
+                    <input type="text" id="quantifier_f" name="quantifier_f">
+                   </div>      
+                
+                <!-- -f qcir (default for now) -->
+                <div class="form-row">
+                    <label for="f_qcir">f:</label>
+                    <input type="text" id="f_qcir" name="f_qcir" value="qcir (DEFAULT)">
+                   </div>      
+                 
+                <!-- -o test/HQ.qcir (default for now) -->
+                <div class="form-row">
+                    <label for="o_qcir">o:</label>
+                    <input type="text" id="o_qcir" name="o_qcir" value="qcir (DEFAULT)">
+                   </div>    
+                   
+                <!-- -sem input -->
+                <div class="form-row">
+                    <label for="semantics">Semantics:</label>
+                    <input type="text" id="semantics" name="semantics">
+                   </div>       
+                 
+                <!-- -n --fast -new NN (default for now) -->
+                <div class="form-row">
+                    <label for="nfn">-n --fast -new:</label>
+                    <input type="text" id="nfn" name="nfn" value="NN (DEFAULT)">
+                   </div>       
+
     
                  <!-- Add a button to trigger storing the input -->
                  <button type="submit" id="run">Run</button>
@@ -196,24 +265,36 @@
             {
                 const model_1_init = document.getElementById('model_1_init').value;
                 const model_1_trans = document.getElementById('model_1_trans').value;
-                console.log(model_1_init);
                 const model_1_init_select = document.getElementById('model_1_init_select').files[0];
                 const model_1_trans_select = document.getElementById('model_1_trans_select').files[0];
+
+                const model_2_init = document.getElementById('model_2_init').value;
+                const model_2_trans = document.getElementById('model_2_trans').value;
+                const model_2_init_select = document.getElementById('model_2_init_select').files[0];
+                const model_2_trans_select = document.getElementById('model_2_trans_select').files[0];
+
+                const number_k = document.getElementById('number_k').value;
+                const quantifier_f = document.getElementById('quantifier_f').value;
+                const semantics = document.getElementById('semantics').value;
+                const nfn = document.getElementById('nfn').value;
+
+                const test_folder = document.getElementById('test_folder').value;
+
                 let formData = new FormData();
+
+                if (test_folder) {
+                    formData.append('test_folder', test_folder);
+                }
+                else {
+                    formData.append('test_folder', '');
+                }
 
                 // Check if a file was selected
                 if (model_1_init_select) {
                     formData.append('model_1_init_select', model_1_init_select);
                 }
                 else {
-                    if (model_1_init === '') {
-                        document.getElementById('runOutput').innerText = 'Error: Model 1 Init Input cannot be empty.';
-                        return;
-                    }   
-                    else
-                    {
                         formData.append('model_1_init', model_1_init);
-                    }
                 }
                 console.log("form",formData[0]);
 
@@ -222,14 +303,51 @@
                     formData.append('model_1_trans_select', model_1_trans_select);
                 }
                 else {
-                    if (model_1_trans === '') {
-                        document.getElementById('runOutput').innerText = 'Error: Model 2 Trans Input cannot be empty.';
-                        return;
-                    }   
-                    else
-                    {
+                    // if (model_1_trans === '') {
+                    //     document.getElementById('runOutput').innerText = 'Error: Model 2 Trans Input cannot be empty.';
+                    //     return;
+                    // }   
+                    // else
+                    // {
                         formData.append('model_1_trans', model_1_trans);
-                    }
+                    //}
+                }
+
+                 // Check if a file was selected
+                 if (model_2_init_select) {
+                    formData.append('model_2_init_select', model_2_init_select);
+                }
+                else {
+                        formData.append('model_2_init', model_2_init);
+                }
+
+                // Check if a file was selected
+                if (model_2_trans_select) {
+                    formData.append('model_2_trans_select', model_2_trans_select);
+                }
+                else {
+                        formData.append('model_2_trans', model_2_trans);
+                }
+
+                if (number_k) {
+                    formData.append('number_k', number_k);
+                }
+                else {
+                    formData.append('number_k', '3');
+                }
+
+                if (quantifier_f) {
+                    formData.append('quantifier_f', quantifier_f);
+                }
+                else {
+                    formData.append('quantifier_f', 'AA');
+                }
+
+                if (semantics) {
+                    formData.append('semantics', semantics);
+                }
+                else {
+                    formData.append('semantics', 'PES');
                 }
         
 

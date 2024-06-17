@@ -9,21 +9,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $model_1_trans = isset($_POST['model_1_trans']) ? $_POST['model_1_trans'] : '';
     $model_1_trans_select = isset($_FILES['model_1_trans_select']) ? $_FILES['model_1_trans_select']['name'] : '';
 
+    $model_2_init = isset($_POST['model_2_init']) ? $_POST['model_2_init'] : '';
+    $model_2_init_select = isset($_FILES['model_2_init_select']) ? $_FILES['model_2_init_select']['name'] : '';
+
+    $model_2_trans = isset($_POST['model_2_trans']) ? $_POST['model_2_trans'] : '';
+    $model_2_trans_select = isset($_FILES['model_2_trans_select']) ? $_FILES['model_2_trans_select']['name'] : '';
+
+    $number_k = isset($_POST['number_k']) ? $_POST['number_k'] : '';
+    $quantifier_f = isset($_POST['quantifier_f']) ? $_POST['quantifier_f'] : '';
+    $semantics = isset($_POST['semantics']) ? $_POST['semantics'] : '';
+    
+    $test_folder = isset($_POST['test_folder']) ? $_POST['test_folder'] : '';
+
     // Log inputs for debugging
     error_log("Input: model_1_init=$model_1_init");
     error_log(print_r($_FILES, true)); // Log $_FILES contents for debugging
     error_log("Input: model_1_trans=$model_1_trans");
     error_log("Input: model_1_trans_select=$model_1_trans_select");
-    //error_log("Input: model_1_init_select=$model_1_init_select");
 
-    // Define the expected output file path
-    $outputFile = './test/HQ.qcir';
+    error_log("Input: model_2_trans=$model_2_trans");
+    error_log("Input: model_2_trans_select=$model_2_trans_select");
+
+    // Define the expected output file path, does this need to change?
+    $outputFolder ='test' . $test_folder;
+    //$outputFile = './test/HQ.qcir';
+    $outputFile = './' . $outputFolder . '/HQ.qcir';
+
+    // Define the file path where the content will be saved
+    $inputI1 = $outputFolder . '/I_1.bool';
 
     if (!empty($model_1_init)) {
         //$inputI1 = '-I ' . escapeshellarg($model_1_init);
         //$inputI1 = '-I ' . $model_1_init;
-        // Define the file path where the content will be saved
-        $inputI1 = 'test/I_1.bool';
 
         // Save the content to the file
         if (file_put_contents('./test/I_1.bool', $model_1_init) === false) {
@@ -35,29 +52,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         error_log("Input: model_1_init_select=$model_1_init_select");
         // Handle file upload
         // Move uploaded file to desired location 
-        $targetPath = './test/';
+        $targetPath = './' . $outputFolder;
         $newFilename = 'I_1.bool';
         $filename = basename($_FILES['model_1_init_select']['name']);
         $uploadedFile = $targetPath . $newFilename;
 
         if (!(move_uploaded_file($_FILES['model_1_init_select']['tmp_name'], $uploadedFile))) {
-            //$inputI1 = '-I ' . escapeshellarg($uploadedFile);
+         //   $inputI1 = '-I /test/' . $newFilename;
         //} else {
             echo json_encode(['error' => 'Failed to move uploaded file']);
             exit;
         }
     } 
     else {
-        echo json_encode(['error' => 'No input provided or file does not exist.']);
-        exit;
+        if (!(file_exists('./' . $inputI1))){
+            echo json_encode(['error' => 'No input provided or file does not exist.']);
+            exit;
+        }
     }
-    //error_log("Input: help me=$inputI1");
 
-    // Determine the input for -I flag
-    $inputR1 = '';
+    $inputI2 = $outputFolder . '/I_2.bool';
+
+    if (!empty($model_2_init)) {
+        //$inputI1 = '-I ' . escapeshellarg($model_1_init);
+        //$inputI1 = '-I ' . $model_1_init;
+
+        // Save the content to the file
+        if (file_put_contents('./test/I_2.bool', $model_2_init) === false) {
+            echo json_encode(['error' => 'Failed to create input file']);
+            exit;
+        }
+    } 
+    else if (!empty($model_2_init_select)) {
+        error_log("Input: model_1_init_select=$model_2_init_select");
+        // Handle file upload
+        // Move uploaded file to desired location 
+        $targetPath = './' . $outputFolder;
+        $newFilename = 'I_2.bool';
+        $filename = basename($_FILES['model_2_init_select']['name']);
+        $uploadedFile = $targetPath . $newFilename;
+
+        if (!(move_uploaded_file($_FILES['model_2_init_select']['tmp_name'], $uploadedFile))) {
+         //   $inputI1 = '-I /test/' . $newFilename;
+        //} else {
+            echo json_encode(['error' => 'Failed to move uploaded file']);
+            exit;
+        }
+    } 
+    else {
+        if (!(file_exists('./' . $inputI2))){
+            echo json_encode(['error' => 'No input provided or file does not exist.']);
+            exit;
+        }
+    }
+
+    $inputR1 = $outputFolder . '/R_1.bool';
     if (!empty($model_1_trans)) {
-        // Define the file path where the content will be saved
-        $inputR1 = 'test/R_1.bool';
 
         // Save the content to the file
         if (file_put_contents('./test/R_1.bool', $model_1_trans) === false) {
@@ -68,35 +118,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else if (!empty($model_1_trans_select)) {
         // Handle file upload
         // Move uploaded file to desired location 
-        $targetPath = './test/';
+        $targetPath = './' . $outputFolder;
         $filename = basename($_FILES['model_1_trans_select']['name']);
         $newFilename = 'R_1.bool';
         $uploadedFile = $targetPath . $newFilename;
 
-        if (move_uploaded_file($_FILES['model_1_trans_select']['tmp_name'], $uploadedFile)) {
-            $inputR1 = '-R test/' . $model_1_trans_select;
-        } else {
+        if (!(move_uploaded_file($_FILES['model_1_trans_select']['tmp_name'], $uploadedFile))) {
+            //$inputR1 = 'test/' . $newFilename;
+        //} else {
             echo json_encode(['error' => 'Failed to move uploaded file']);
             exit;
         }
     } 
     else {
-        echo json_encode(['error' => 'No input provided or file does not exist.']);
-        exit;
+        if (!(file_exists('./' . $inputR1))){
+            echo json_encode(['error' => 'No input provided or file does not exist.']);
+            exit;
+        }
+    }
+
+
+    $inputR2 = $outputFolder . '/R_2.bool';
+    if (!empty($model_2_trans)) {
+
+        // Save the content to the file
+        if (file_put_contents('./test/R_2.bool', $model_2_trans) === false) {
+            echo json_encode(['error' => 'Failed to create input file']);
+            exit;
+        }
+    } 
+    else if (!empty($model_2_trans_select)) {
+        // Handle file upload
+        // Move uploaded file to desired location 
+        $targetPath = './' . $outputFolder;
+        $filename = basename($_FILES['model_2_trans_select']['name']);
+        $newFilename = 'R_2.bool';
+        $uploadedFile = $targetPath . $newFilename;
+
+        if (!(move_uploaded_file($_FILES['model_2_trans_select']['tmp_name'], $uploadedFile))) {
+            //$inputR1 = 'test/' . $newFilename;
+        //} else {
+            echo json_encode(['error' => 'Failed to move uploaded file']);
+            exit;
+        }
+    } 
+    else {
+        if (!(file_exists('./' . $inputR2))){
+            echo json_encode(['error' => 'No input provided or file does not exist.']);
+            exit;
+        }
     }
 
     #-I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN
 
+    $p_hq = $outputFolder . '/P.hq';
+    $HQ = $outputFolder . '/HQ.qcir';
     // Call the first executable and get its output
-    $commandGen = './bin/genqbf -I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN';
-
-
-    // $commandGen = sprintf(
-    //     './bin/genqbf %s %s -J %s -S %s -P %s -k %d -F %s -f qcir -o %s -sem %s -n --fast -new %s',
-    //     $inputI1, $inputR1, 'test/I_2.bool', 'test/R_2.bool',
-    //     'test/P.hq', 3, 'AA', 'test/HQ.qcir', 
-    //     'PES', 'NN'
-    // );
+    //$commandGen = './bin/genqbf -I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN';
+    //$commandGen = './bin/genqbf -I test2/I_1.bool -R test2/R_1.bool -J test2/I_2.bool -S test2/R_2.bool -P test2/P.hq -k 3 -F AA -f qcir -o test2/HQ.qcir -sem PES -n --fast -new NN';
+    //$commandGen = './bin/genqbf -I test3/I_1.bool -R test3/R_1.bool -J test3/I_2.bool -S test3/R_2.bool -P test3/P.hq -k 3 -F AA -f qcir -o test3/HQ.qcir -sem PES -n --fast -new NN';
+    $commandGen = sprintf(
+        './bin/genqbf -I %s -R %s -J %s -S %s -P %s -k %s -F %s -f qcir -o %s -sem %s -n --fast -new %s',
+        $inputI1, $inputR1, $inputI2, $inputR2,
+        $p_hq, $number_k, $quantifier_f, $HQ, 
+        $semantics, 'NN'
+    );
 
     
     $genOutput = [];
