@@ -19,11 +19,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Define the expected output file path
     $outputFile = './test/HQ.qcir';
 
-    // Determine the input for -I flag
-    $inputI1 = '';
     if (!empty($model_1_init)) {
-        $inputI1 = '-I ' . escapeshellarg($model_1_init);
+        //$inputI1 = '-I ' . escapeshellarg($model_1_init);
         //$inputI1 = '-I ' . $model_1_init;
+        // Define the file path where the content will be saved
+        $inputI1 = 'test/I_1.bool';
+
+        // Save the content to the file
+        if (file_put_contents('./test/I_1.bool', $model_1_init) === false) {
+            echo json_encode(['error' => 'Failed to create input file']);
+            exit;
+        }
     } 
     else if (!empty($model_1_init_select)) {
         error_log("Input: model_1_init_select=$model_1_init_select");
@@ -48,8 +54,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Determine the input for -I flag
     $inputR1 = '';
     if (!empty($model_1_trans)) {
-        //$inputR1 = '-R ' . $model_1_trans;
-        $inputR1 = '-R ' . escapeshellarg($model_1_trans);
+        // Define the file path where the content will be saved
+        $inputR1 = 'test/R_1.bool';
+
+        // Save the content to the file
+        if (file_put_contents('./test/R_1.bool', $model_1_trans) === false) {
+            echo json_encode(['error' => 'Failed to create input file']);
+            exit;
+        }
     } 
     else if (!empty($model_1_trans_select)) {
         // Handle file upload
@@ -59,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $uploadedFile = $targetPath . $filename;
 
         if (move_uploaded_file($_FILES['model_1_trans_select']['tmp_name'], $uploadedFile)) {
-            $inputR1 = '-R ' . escapeshellarg($uploadedFile);
+            $inputR1 = '-R test/' . $model_1_trans_select;
         } else {
             echo json_encode(['error' => 'Failed to move uploaded file']);
             exit;
@@ -73,14 +85,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     #-I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN
 
     // Call the first executable and get its output
-    //$commandGen = './bin/genqbf ' . $inputI1 . $inputR1 . '-J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN';
-    $commandGen = sprintf(
-        './bin/genqbf %s %s -J %s -S %s -P %s -k %d -F %s -f qcir -o %s -sem %s -n --fast -new %s',
-        $inputI1, $inputR1, 'test/I_2.bool', 'test/R_2.bool',
-        'test/P.hq', 3, 'AA', 'test/HQ.qcir', 
-        'PES', 'NN'
-    );
-    
+    $commandGen = './bin/genqbf -I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN';
+
+
+    // $commandGen = sprintf(
+    //     './bin/genqbf %s %s -J %s -S %s -P %s -k %d -F %s -f qcir -o %s -sem %s -n --fast -new %s',
+    //     $inputI1, $inputR1, 'test/I_2.bool', 'test/R_2.bool',
+    //     'test/P.hq', 3, 'AA', 'test/HQ.qcir', 
+    //     'PES', 'NN'
+    // );
+
     
     $genOutput = [];
     $genStatus = null;
