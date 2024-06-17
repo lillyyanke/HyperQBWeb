@@ -36,12 +36,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Handle file upload
         // Move uploaded file to desired location 
         $targetPath = './test/';
+        $newFilename = 'I_1.bool';
         $filename = basename($_FILES['model_1_init_select']['name']);
-        $uploadedFile = $targetPath . $filename;
+        $uploadedFile = $targetPath . $newFilename;
 
-        if (move_uploaded_file($_FILES['model_1_init_select']['tmp_name'], $uploadedFile)) {
-            $inputI1 = '-I ' . escapeshellarg($uploadedFile);
-        } else {
+        if (!(move_uploaded_file($_FILES['model_1_init_select']['tmp_name'], $uploadedFile))) {
+            //$inputI1 = '-I ' . escapeshellarg($uploadedFile);
+        //} else {
             echo json_encode(['error' => 'Failed to move uploaded file']);
             exit;
         }
@@ -50,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode(['error' => 'No input provided or file does not exist.']);
         exit;
     }
+    //error_log("Input: help me=$inputI1");
 
     // Determine the input for -I flag
     $inputR1 = '';
@@ -68,7 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Move uploaded file to desired location 
         $targetPath = './test/';
         $filename = basename($_FILES['model_1_trans_select']['name']);
-        $uploadedFile = $targetPath . $filename;
+        $newFilename = 'R_1.bool';
+        $uploadedFile = $targetPath . $newFilename;
 
         if (move_uploaded_file($_FILES['model_1_trans_select']['tmp_name'], $uploadedFile)) {
             $inputR1 = '-R test/' . $model_1_trans_select;
