@@ -48,11 +48,11 @@ textarea {
     width: 400px; 
     resize: both; 
     display: block; 
-    color: blue;
+    color: black;
 }
 
 output {
-    color: blue;
+    color: black;
 }
 
 hr {

@@ -108,6 +108,11 @@
                  <input type="file" id="model_1_init_select" name="model_1_init_select">
                 </div>
 
+                <div class="form-row">
+                    <!-- Textarea for displaying file contents -->
+                    <textarea id="fileContent1" rows="5" cols="30" placeholder="File contents will appear here..."></textarea>
+                </div>
+
                 <!--Model 1 trans input box for typing file name -->
                 <div class="form-row">
                     <label for="model_1_trans">Model 1 trans:</label>
@@ -119,6 +124,11 @@
                     <label for="model_1_trans_select">Or Select a File:</label>
                     <input type="file" id="model_1_trans_select" name="model_1_trans_select">
                    </div>        
+
+                <div class="form-row">
+                    <!-- Textarea for displaying file contents -->
+                    <textarea id="fileContent2" rows="5" cols="30" placeholder="File contents will appear here..."></textarea>
+                </div>
                    
                 <!--Model 2 init input box for typing input -->
                 <div class="form-row">
@@ -131,6 +141,11 @@
                     <label for="model_2_init_select">Or Select a File:</label>
                     <input type="file" id="model_2_init_select" name="model_2_init_select">
                    </div>
+
+                   <div class="form-row">
+                    <!-- Textarea for displaying file contents -->
+                    <textarea id="fileContent3" rows="5" cols="30" placeholder="File contents will appear here..."></textarea>
+                </div>
    
                    <!--Model 2 trans input box for typing file name -->
                    <div class="form-row">
@@ -143,6 +158,11 @@
                        <label for="model_2_trans_select">Or Select a File:</label>
                        <input type="file" id="model_2_trans_select" name="model_2_trans_select">
                       </div>     
+
+                <div class="form-row">
+                    <!-- Textarea for displaying file contents -->
+                    <textarea id="fileContent4" rows="5" cols="30" placeholder="File contents will appear here..."></textarea>
+                </div>    
 
                 <!-- -k input -->
                 <div class="form-row">
@@ -193,6 +213,79 @@
             
         </div>
     </div>
+
+    <script>
+        document.getElementById('model_1_init_select').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith('.bool')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fileContent1').textContent = e.target.result;
+                };
+                reader.onerror = function(e) {
+                    alert('Error reading file: ' + e.target.error.name);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please select a valid .bool file');
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('model_1_trans_select').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith('.bool')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fileContent2').textContent = e.target.result;
+                };
+                reader.onerror = function(e) {
+                    alert('Error reading file: ' + e.target.error.name);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please select a valid .bool file');
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('model_2_init_select').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith('.bool')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fileContent3').textContent = e.target.result;
+                };
+                reader.onerror = function(e) {
+                    alert('Error reading file: ' + e.target.error.name);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please select a valid .bool file');
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('model_2_trans_select').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith('.bool')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fileContent4').textContent = e.target.result;
+                };
+                reader.onerror = function(e) {
+                    alert('Error reading file: ' + e.target.error.name);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please select a valid .bool file');
+            }
+        });
+    </script>
+    
   
      <script>
           document.getElementById('forms').addEventListener('submit', function(event) {

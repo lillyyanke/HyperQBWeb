@@ -53,9 +53,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Handle file upload
         // Move uploaded file to desired location 
         $targetPath = './' . $outputFolder;
-        $newFilename = 'I_1.bool';
+        $newFilename = '/I_1.bool';
         $filename = basename($_FILES['model_1_init_select']['name']);
         $uploadedFile = $targetPath . $newFilename;
+        error_log("Uploaded file =$uploadedFile");
 
         if (!(move_uploaded_file($_FILES['model_1_init_select']['tmp_name'], $uploadedFile))) {
          //   $inputI1 = '-I /test/' . $newFilename;
@@ -88,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Handle file upload
         // Move uploaded file to desired location 
         $targetPath = './' . $outputFolder;
-        $newFilename = 'I_2.bool';
+        $newFilename = '/I_2.bool';
         $filename = basename($_FILES['model_2_init_select']['name']);
         $uploadedFile = $targetPath . $newFilename;
 
@@ -120,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Move uploaded file to desired location 
         $targetPath = './' . $outputFolder;
         $filename = basename($_FILES['model_1_trans_select']['name']);
-        $newFilename = 'R_1.bool';
+        $newFilename = '/R_1.bool';
         $uploadedFile = $targetPath . $newFilename;
 
         if (!(move_uploaded_file($_FILES['model_1_trans_select']['tmp_name'], $uploadedFile))) {
@@ -152,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Move uploaded file to desired location 
         $targetPath = './' . $outputFolder;
         $filename = basename($_FILES['model_2_trans_select']['name']);
-        $newFilename = 'R_2.bool';
+        $newFilename = '/R_2.bool';
         $uploadedFile = $targetPath . $newFilename;
 
         if (!(move_uploaded_file($_FILES['model_2_trans_select']['tmp_name'], $uploadedFile))) {
