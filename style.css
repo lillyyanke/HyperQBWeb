@@ -66,9 +66,12 @@ hr {
 body{
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Arial', sans-serif;
     background-color: #101214;
     color: #7A7C80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
 }
 
