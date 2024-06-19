@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -445,6 +446,46 @@
                     document.getElementById('runOutput').innerText = 'An error occurred while processing the request.';
                 });
             });
+
+        document.getElementById('saveCase').addEventListener('click', function() {
+            // Get the contents of the textareas
+            const test_folder = document.getElementById('test_folder').value;
+            const model_1_init = document.getElementById('model_1_init').value;
+            const model_1_trans = document.getElementById('model_1_trans').value;
+            const model_2_init = document.getElementById('model_2_init').value;
+            const model_2_trans = document.getElementById('model_2_trans').value;
+            const p_hq = document.getElementById('p_hq').value;
+            const output = document.getElementById('runOutput').value;
+
+            saveFilesAsZip('test'.test_folder, [
+                { filename: 'I_1.bool', content: model_1_init },
+                { filename: 'R_1.bool', content: model_1_trans },
+                { filename: 'I_2.bool', content: model_2_init },
+                { filename: 'R_2.bool', content: model_2_trans },
+                { filename: 'P.hq', content: p_hq },
+                { filename: 'output.txt', content: output }
+            ]);
+        });
+        function saveFilesAsZip(folderName, files) {
+            const zip = new JSZip();
+
+            files.forEach(file => {
+                zip.file(file.filename, file.content);
+            });
+
+            zip.generateAsync({ type: 'blob' }).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `result.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }).catch(err => {
+                console.error('Error creating zip file', err);
+            });
+        }
      </script>
 </body>
 </html>

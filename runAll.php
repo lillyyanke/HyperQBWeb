@@ -39,6 +39,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //$outputFile = './test/HQ.qcir';
     $outputFile = './' . $outputFolder . '/HQ.qcir';
 
+    // if (!(file_exists('./' . $outputFolder))){
+    //     error_log("Make test folder");
+    // }
+
     // Define the file path where the content will be saved
     $inputI1 = $outputFolder . '/I_1.bool';
 
