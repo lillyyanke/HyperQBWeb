@@ -99,6 +99,25 @@
                     <textarea id="fileContent4" rows="5" cols="30" placeholder="File contents will appear here..."></textarea>
                 </div>    
 
+
+                <!--P.hq input -->
+                <div class="form-row">
+                    <label for="p_hq">P.hq :</label>
+                    <input type="text" id="p_hq" name="p_hq">
+                   </div>
+   
+                   <div class="form-row">
+                    <!-- File input field for selecting a file -->
+                    <label for="p_hq_select">Or Select a File:</label>
+                    <input type="file" id="p_hq_select" name="p_hq_select">
+                   </div>
+   
+                   <div class="form-row">
+                       <!-- Textarea for displaying file contents -->
+                       <textarea id="fileContent5" rows="5" cols="30" placeholder="File contents will appear here..."></textarea>
+                   </div>
+
+
                 <!-- -k input -->
                 <div class="form-row">
                     <label for="number_k">K:</label>
@@ -112,16 +131,16 @@
                    </div>      
                 
                 <!-- -f qcir (default for now) -->
-                <div class="form-row">
+                <!-- <div class="form-row">
                     <label for="f_qcir">f (DEFAULT):</label>
                     <input type="text" id="f_qcir" name="f_qcir" value="qcir">
-                   </div>      
+                   </div>       -->
                  
                 <!-- -o test/HQ.qcir (default for now) -->
-                <div class="form-row">
+                <!-- <div class="form-row">
                     <label for="o_qcir">o (DEFAULT):</label>
                     <input type="text" id="o_qcir" name="o_qcir" value="qcir">
-                   </div>    
+                   </div>     -->
                    
                 <!-- -sem input -->
                 <div class="form-row">
@@ -135,10 +154,10 @@
                    </div>       
                  
                 <!-- -n --fast -new NN (default for now) -->
-                <div class="form-row">
+                <!-- <div class="form-row">
                     <label for="nfn">-n --fast -new (DEFAULT):</label>
                     <input type="text" id="nfn" name="nfn" value="NN">
-                   </div>       
+                   </div>        -->
 
                 <!-- test folder number (JUST FOR TESTING) -->
                 <div class="form-row">
@@ -153,6 +172,11 @@
                  <label for="output">Result</label>
                  <textarea id="runOutput" rows="5" cols="50" readonly></textarea>
                  <hr>
+
+                 <!-- Save and download -->
+                <button type="button" id="saveCase">Save Current Case</button>
+
+                <hr>
 
                  <!-- clearn interface button -->
                 <button type="button" id="clearCase">Clear Current Case</button>
@@ -170,6 +194,7 @@
                 model_1_trans: 'R_1.bool',
                 model_2_init: 'I_2.bool',
                 model_2_trans: 'R_2.bool',
+                p_hq: 'P.hq',
                 number_k: '3',
                 quantifier_f: 'AA',
                 semantics: 'PES',
@@ -181,6 +206,7 @@
                 model_1_trans: 'R_1.bool',
                 model_2_init: 'I_2.bool',
                 model_2_trans: 'R_2.bool',
+                p_hq: 'P.hq',
                 number_k: '3',
                 quantifier_f: 'AA',
                 semantics: 'OPT',
@@ -192,6 +218,7 @@
                 model_1_trans: 'R_1.bool',
                 model_2_init: 'I_2.bool',
                 model_2_trans: 'R_1.bool',
+                p_hq: 'P.hq',
                 number_k: '3',
                 quantifier_f: 'AA',
                 semantics: 'PES',
@@ -207,13 +234,15 @@
                 document.getElementById('number_k').value = exampleData.number_k;
                 document.getElementById('quantifier_f').value = exampleData.quantifier_f;
                 document.getElementById('semantics').value = exampleData.semantics;
-                document.getElementById('nfn').value = exampleData.nfn;
+                document.getElementById('p_hq').value = exampleData.p_hq;
+                //document.getElementById('nfn').value = exampleData.nfn;
 
                 // Load file contents into corresponding textareas
-                loadFileContents(exampleData.model_1_init, 'fileContent1', exampleData.test_folder);
-                loadFileContents(exampleData.model_1_trans, 'fileContent2', exampleData.test_folder);
-                loadFileContents(exampleData.model_2_init, 'fileContent3', exampleData.test_folder);
-                loadFileContents(exampleData.model_2_trans, 'fileContent4', exampleData.test_folder);
+                loadFileContents(exampleData.model_1_init, 'model_1_init', exampleData.test_folder);
+                loadFileContents(exampleData.model_1_trans, 'model_1_trans', exampleData.test_folder);
+                loadFileContents(exampleData.model_2_init, 'model_2_init', exampleData.test_folder);
+                loadFileContents(exampleData.model_2_trans, 'model_2_trans', exampleData.test_folder);
+                loadFileContents(exampleData.p_hq, 'p_hq', exampleData.test_folder);
             }
         });
 
@@ -226,7 +255,7 @@
                     return response.text();
                 })
                 .then(data => {
-                    document.getElementById(textareaId).textContent = data;
+                    document.getElementById(textareaId).value = data;
                 })
                 .catch(error => {
                     console.error('There was a problem with fetching the file:', error);
@@ -244,6 +273,7 @@
             document.getElementById('number_k').value = '';
             document.getElementById('quantifier_f').value = '';
             document.getElementById('semantics').value = '';
+            document.getElementById('p_hq').value = '';
             //document.getElementById('nfn').value = '';
             document.getElementById('test_folder').value = '';
 
@@ -252,12 +282,14 @@
             document.getElementById('model_1_trans_select').value = '';
             document.getElementById('model_2_init_select').value = '';
             document.getElementById('model_2_trans_select').value = '';
+            document.getElementById('p_hq_select').value = '';
 
             // Clear file contents textareas
             document.getElementById('fileContent1').textContent = '';
             document.getElementById('fileContent2').textContent = '';
             document.getElementById('fileContent3').textContent = '';
             document.getElementById('fileContent4').textContent = '';
+            document.getElementById('fileContent5').textContent = '';
 
             //Clear result
             document.getElementById('runOutput').innerText = '';
@@ -328,6 +360,22 @@
             }
         });
 
+        document.getElementById('p_hq_select').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fileContent5').textContent = e.target.result;
+                };
+                reader.onerror = function(e) {
+                    alert('Error reading file: ' + e.target.error.name);
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please select a valid file');
+            }
+        });
+
         // Event listener for Clear Current Case button
         document.getElementById('clearCase').addEventListener('click', function(event) {
             event.preventDefault();
@@ -346,6 +394,9 @@
                 const model_2_init_select = document.getElementById('model_2_init_select').files[0];
                 const model_2_trans_select = document.getElementById('model_2_trans_select').files[0];
 
+                const p_hq = document.getElementById('p_hq').value;
+                const p_hq_select = document.getElementById('p_hq_select').files[0];
+
                 const number_k = document.getElementById('number_k').value;
                 const quantifier_f = document.getElementById('quantifier_f').value;
                 const semantics = document.getElementById('semantics').value;
@@ -356,14 +407,25 @@
                 let formData = new FormData();
 
                 formData.append('test_folder', test_folder || '');
-                formData.append('model_1_init_select', model_1_init_select || model_1_init);
-                formData.append('model_1_trans_select', model_1_trans_select || model_1_trans);
-                formData.append('model_2_init_select', model_2_init_select || model_2_init);
-                formData.append('model_2_trans_select', model_2_trans_select || model_2_trans);
+                formData.append('model_1_init_select', model_1_init_select);
+                formData.append('model_1_init', model_1_init);
+                formData.append('model_1_trans_select', model_1_trans_select);
+                formData.append('model_1_trans', model_1_trans);
+                formData.append('model_2_init_select', model_2_init_select);
+                formData.append('model_2_init', model_2_init);
+                formData.append('model_2_trans_select', model_2_trans_select);
+                formData.append('model_2_trans', model_2_trans);
+                formData.append('p_hq_select', p_hq_select);
+                formData.append('p_hq', p_hq);
                 formData.append('number_k', number_k || '3');
                 formData.append('quantifier_f', quantifier_f || 'AA');
                 formData.append('semantics', semantics || 'PES');
                 //formData.append('nfn', nfn || 'NN');
+
+                // Iterate over the formData entries and log them
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value instanceof File ? value.name : value}`);
+            }
 
 
                 fetch('runAll.php', {
