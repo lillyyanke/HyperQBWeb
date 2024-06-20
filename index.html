@@ -231,6 +231,7 @@
             const selectedExample = event.target.value;
             const exampleData = examples[selectedExample];
             if (exampleData) {
+                clearInterface();
                 document.getElementById('test_folder').value = exampleData.test_folder;
                 document.getElementById('number_k').value = exampleData.number_k;
                 document.getElementById('quantifier_f').value = exampleData.quantifier_f;

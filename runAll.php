@@ -2,198 +2,89 @@
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
+    $model_1_init = $_POST['model_1_init'] ?? '';
+    $model_1_trans = $_POST['model_1_trans'] ?? '';
+    $model_2_init = $_POST['model_2_init'] ?? '';
+    $model_2_trans = $_POST['model_2_trans'] ?? '';
+    $p_hq = $_POST['p_hq'] ?? '';
+    $number_k = $_POST['number_k'] ?? '';
+    $quantifier_f = $_POST['quantifier_f'] ?? '';
+    $semantics = $_POST['semantics'] ?? '';
+    $test_folder = $_POST['test_folder'] ?? '';
 
-    $model_1_init = isset($_POST['model_1_init']) ? $_POST['model_1_init'] : '';
+    
     $model_1_init_select = isset($_FILES['model_1_init_select']) ? $_FILES['model_1_init_select']['name'] : '';
-
-    $model_1_trans = isset($_POST['model_1_trans']) ? $_POST['model_1_trans'] : '';
     $model_1_trans_select = isset($_FILES['model_1_trans_select']) ? $_FILES['model_1_trans_select']['name'] : '';
-
-    $model_2_init = isset($_POST['model_2_init']) ? $_POST['model_2_init'] : '';
     $model_2_init_select = isset($_FILES['model_2_init_select']) ? $_FILES['model_2_init_select']['name'] : '';
-
-    $model_2_trans = isset($_POST['model_2_trans']) ? $_POST['model_2_trans'] : '';
     $model_2_trans_select = isset($_FILES['model_2_trans_select']) ? $_FILES['model_2_trans_select']['name'] : '';
-
-    $p_hq = isset($_POST['p_hq']) ? $_POST['p_hq'] : '';
     $p_hq_select = isset($_FILES['p_hq_select']) ? $_FILES['p_hq_select']['name'] : '';
 
-    $number_k = isset($_POST['number_k']) ? $_POST['number_k'] : '';
-    $quantifier_f = isset($_POST['quantifier_f']) ? $_POST['quantifier_f'] : '';
-    $semantics = isset($_POST['semantics']) ? $_POST['semantics'] : '';
-    
-    $test_folder = isset($_POST['test_folder']) ? $_POST['test_folder'] : '';
 
     // Log inputs for debugging
-    error_log("Input: model_1_init=$model_1_init");
-    error_log(print_r($_FILES, true)); // Log $_FILES contents for debugging
-    error_log("Input: model_1_trans=$model_1_trans");
-    error_log("Input: model_1_trans_select=$model_1_trans_select");
-
-    error_log("Input: model_2_trans=$model_2_trans");
-    error_log("Input: model_2_trans_select=$model_2_trans_select");
+    // error_log("Input: model_1_init=$model_1_init");
+    // error_log(print_r($_FILES, true)); // Log $_FILES contents for debugging
+    // error_log("Input: model_1_trans=$model_1_trans");
+    // error_log("Input: model_1_trans_select=$model_1_trans_select");
+    // error_log("Input: model_2_trans=$model_2_trans");
+    // error_log("Input: model_2_trans_select=$model_2_trans_select");
 
     // Define the expected output file path, does this need to change?
-    $outputFolder ='test' . $test_folder;
-    error_log("test folder=$test_folder");
-    //$outputFile = './test/HQ.qcir';
+    $outputFolder = 'test' . $test_folder;
+
+    if (!is_dir($outputFolder)) {
+        mkdir($outputFolder, 0755, true);
+    }
+    // For storing the result
     $outputFile = './' . $outputFolder . '/HQ.qcir';
 
+    error_log("Output Folder=$outputFolder");
     // if (!(file_exists('./' . $outputFolder))){
     //     error_log("Make test folder");
     // }
 
-    // Define the file path where the content will be saved
-    $inputI1 = $outputFolder . '/I_1.bool';
-
-    if (!empty($model_1_init)) {
-        // Save the content to the file
-        if (file_put_contents('./'.$outputFolder.'/I_1.bool', $model_1_init) === false) {
-            echo json_encode(['error' => 'Failed to create input file for I_1.bool']);
-            exit;
-        }
-    } 
-    else if (!empty($model_1_init_select)) {
-        error_log("Input: model_1_init_select=$model_1_init_select");
-        // Handle file upload
-        // Move uploaded file to desired location 
-        $targetPath = './' . $outputFolder;
-        $newFilename = '/I_1.bool';
-        $filename = basename($_FILES['model_1_init_select']['name']);
-        $uploadedFile = $targetPath . $newFilename;
-        error_log("Uploaded file =$uploadedFile");
-
-        if (!(move_uploaded_file($_FILES['model_1_init_select']['tmp_name'], $uploadedFile))) {
-            echo json_encode(['error' => 'Failed to move uploaded file to I_1.bool']);
-            exit;
-        }
-    } 
-    else {
-        if (!(file_exists('./' . $inputI1))){
-            echo json_encode(['error' => 'No input provided or file does not exist for I_1.bool.']);
-            exit;
-        }
-    }
-
-    $inputI2 = $outputFolder . '/I_2.bool';
-
-    if (!empty($model_2_init)) {
-        // Save the content to the file
-        if (file_put_contents('./'.$outputFolder.'/I_2.bool', $model_2_init) === false) {
-            echo json_encode(['error' => 'Failed to create input file for I_2.bool']);
-            exit;
-        }
-    } 
-    else if (!empty($model_2_init_select)) {
-        error_log("Input: model_1_init_select=$model_2_init_select");
-        // Handle file upload
-        // Move uploaded file to desired location 
-        $targetPath = './' . $outputFolder;
-        $newFilename = '/I_2.bool';
-        $filename = basename($_FILES['model_2_init_select']['name']);
-        $uploadedFile = $targetPath . $newFilename;
-        if (!(move_uploaded_file($_FILES['model_2_init_select']['tmp_name'], $uploadedFile))) {
-            echo json_encode(['error' => 'Failed to move uploaded file to I_2.bool']);
-            exit;
-        }
-    } 
-    else {
-        if (!(file_exists('./' . $inputI2))){
-            echo json_encode(['error' => 'No input provided or file does not exist for I_2.bool.']);
-            exit;
-        }
-    }
-
-    $inputR1 = $outputFolder . '/R_1.bool';
-    if (!empty($model_1_trans)) {
-
-        // Save the content to the file
-        if (file_put_contents('./'.$outputFolder.'/R_1.bool', $model_1_trans) === false) {
-            echo json_encode(['error' => 'Failed to create input file for R_1.bool']);
-            exit;
-        }
-    } 
-    else if (!empty($model_1_trans_select)) {
-        // Handle file upload
-        // Move uploaded file to desired location 
-        $targetPath = './' . $outputFolder;
-        $filename = basename($_FILES['model_1_trans_select']['name']);
-        $newFilename = '/R_1.bool';
-        $uploadedFile = $targetPath . $newFilename;
-
-        if (!(move_uploaded_file($_FILES['model_1_trans_select']['tmp_name'], $uploadedFile))) {
-            echo json_encode(['error' => 'Failed to move uploaded file to R_1.bool']);
-            exit;
-        }
-    } 
-    else {
-        if (!(file_exists('./' . $inputR1))){
-            echo json_encode(['error' => 'No input provided or file does not exist for R_1.bool.']);
-            exit;
-        }
-    }
-
-
-    $inputR2 = $outputFolder . '/R_2.bool';
-    if (!empty($model_2_trans)) {
-
-        // Save the content to the file
-        if (file_put_contents('./'.$outputFolder.'/R_2.bool', $model_2_trans) === false) {
-            echo json_encode(['error' => 'Failed to create input file for R_2.bool']);
-            exit;
-        }
-    } 
-    else if (!empty($model_2_trans_select)) {
-        // Handle file upload
-        // Move uploaded file to desired location 
-        $targetPath = './' . $outputFolder;
-        $filename = basename($_FILES['model_2_trans_select']['name']);
-        $newFilename = '/R_2.bool';
-        $uploadedFile = $targetPath . $newFilename;
-
-        if (!(move_uploaded_file($_FILES['model_2_trans_select']['tmp_name'], $uploadedFile))) {
-            echo json_encode(['error' => 'Failed to move uploaded file for R_2.bool']);
-            exit;
-        }
-    } 
-    else {
-        if (!(file_exists('./' . $inputR2))){
-            echo json_encode(['error' => 'No input provided or file does not exist for R_2.bool.']);
-            exit;
-        }
-    }
-
-
-    error_log("Input: P_hq=$p_hq");
+    function processFile($outputFolder, $fileName, $fileContent, $fileUpload) {
+        $filePath = $outputFolder . '/' . $fileName;
     
-    $inputP = $outputFolder . '/P.hq';
-    if (!empty($p_hq)) {
-
-        // Save the content to the file
-        if (file_put_contents('./'.$outputFolder.'/P.hq', $p_hq) === false) {
-            echo json_encode(['error' => 'Failed to create input file for P.hq']);
-            exit;
+        // Check if content is provided directly
+        if (!empty($fileContent)) {
+            if (!file_exists($filePath)) {
+                error_log("File $filePath does not exist, creating a new file");
+                if (file_put_contents($filePath, $fileContent) === false) {
+                    echo json_encode(['error' => "Failed to create input file for $fileName"]);
+                    exit;
+                }
+            } else {
+                error_log("File $filePath exists!");
+            }
+        } 
+        // Check if a file upload is provided
+        else if (!empty($fileUpload)) {
+            error_log("Input: $fileName upload=$fileUpload");
+            // Handle file upload
+            $targetPath = './' . $outputFolder;
+            $uploadedFile = $targetPath . '/' . $fileName;
+    
+            if (!move_uploaded_file($_FILES[$fileUpload]['tmp_name'], $uploadedFile)) {
+                echo json_encode(['error' => "Failed to move uploaded file to $fileName"]);
+                exit;
+            }
+        } 
+        // Ensure that the file exists if no new content or upload is provided
+        else {
+            if (!file_exists($filePath)) {
+                echo json_encode(['error' => "No input provided or file does not exist for $fileName."]);
+                exit;
+            }
         }
-    } 
-    else if (!empty($p_hq_select)) {
-        // Handle file upload
-        // Move uploaded file to desired location 
-        $targetPath = './' . $outputFolder;
-        $filename = basename($_FILES['p_hq_select']['name']);
-        $newFilename = '/P.hq';
-        $uploadedFile = $targetPath . $newFilename;
-
-        if (!(move_uploaded_file($_FILES['p_hq_select']['tmp_name'], $uploadedFile))) {
-            echo json_encode(['error' => 'Failed to move uploaded file to P.hq']);
-            exit;
-        }
-    } 
-    else {
-        if (!(file_exists('./' . $inputP))){
-            echo json_encode(['error' => 'No input provided or file does not exist for P.hq.']);
-            exit;
-        }
+        return $filePath;
     }
+
+    // Process each file
+    $inputI1 = processFile($outputFolder, 'I_1.bool', $model_1_init, 'model_1_init_select');
+    $inputI2 = processFile($outputFolder, 'I_2.bool', $model_2_init, 'model_2_init_select');
+    $inputR1 = processFile($outputFolder, 'R_1.bool', $model_1_trans, 'model_1_trans_select');
+    $inputR2 = processFile($outputFolder, 'R_2.bool', $model_2_trans, 'model_2_trans_select');
+    $inputP = processFile($outputFolder, 'P.hq', $p_hq, 'p_hq_select'); 
 
     #-I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN
 
