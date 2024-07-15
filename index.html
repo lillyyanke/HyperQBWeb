@@ -304,7 +304,8 @@
             fetch('runAll.php', {
             //fetch('http://localhost:8000', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                protocol: 'http1.1' // Fallback to HTTP/1.1
                 })  
                 .then(response => response.json())
                 .then(data => {
