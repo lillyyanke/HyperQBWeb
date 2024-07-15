@@ -12,44 +12,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $semantics = $_POST['semantics'] ?? '';
     $test_folder = $_POST['test_folder'] ?? '';
 
-    
-    $model_1_init_select = isset($_FILES['model_1_init_select']) ? $_FILES['model_1_init_select']['name'] : '';
-    $model_1_trans_select = isset($_FILES['model_1_trans_select']) ? $_FILES['model_1_trans_select']['name'] : '';
-    $model_2_init_select = isset($_FILES['model_2_init_select']) ? $_FILES['model_2_init_select']['name'] : '';
-    $model_2_trans_select = isset($_FILES['model_2_trans_select']) ? $_FILES['model_2_trans_select']['name'] : '';
-    $p_hq_select = isset($_FILES['p_hq_select']) ? $_FILES['p_hq_select']['name'] : '';
-
-
-    // Log inputs for debugging
-    // error_log("Input: model_1_init=$model_1_init");
-    // error_log(print_r($_FILES, true)); // Log $_FILES contents for debugging
-    // error_log("Input: model_1_trans=$model_1_trans");
-    // error_log("Input: model_1_trans_select=$model_1_trans_select");
-    // error_log("Input: model_2_trans=$model_2_trans");
-    // error_log("Input: model_2_trans_select=$model_2_trans_select");
+    $currentDirectory = getcwd();
+    error_log("Current directory: " . $currentDirectory);
+    error_log("test folder: " . $test_folder);
 
     // Define the expected output file path, does this need to change?
-    $outputFolder = 'test' . $test_folder;
+    $outputFolder = $test_folder;
 
     if (!is_dir($outputFolder)) {
         mkdir($outputFolder, 0755, true);
     }
     // For storing the result
-    $outputFile = './' . $outputFolder . '/HQ.qcir';
+    $outputFile = $currentDirectory .'/' . $outputFolder . '/HQ.qcir';
 
     error_log("Output Folder=$outputFolder");
     // if (!(file_exists('./' . $outputFolder))){
     //     error_log("Make test folder");
     // }
 
-    function processFile($outputFolder, $fileName, $fileContent, $fileUpload) {
+    function processFile($outputFolder, $fileName, $fileContent) {
+        $currentDirectory = getcwd(); //TEST
+
         $filePath = $outputFolder . '/' . $fileName;
+
+        $filePathWDir = $currentDirectory . '/'.$filePath; //TEST
+
+        error_log("File path: $filePath");
+        error_log("File path with dir : $filePathWDir");
     
         // Check if content is provided directly
         if (!empty($fileContent)) {
-            if (!file_exists($filePath)) {
-                error_log("File $filePath does not exist, creating a new file");
-                if (file_put_contents($filePath, $fileContent) === false) {
+            if (!file_exists($filePathWDir)) {
+                error_log("File $filePathWDir does not exist, creating a new file");
+                if (file_put_contents($filePathWDir, $fileContent) === false) {
                     echo json_encode(['error' => "Failed to create input file for $fileName"]);
                     exit;
                 }
@@ -58,17 +53,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } 
         // Check if a file upload is provided
-        else if (!empty($fileUpload)) {
-            error_log("Input: $fileName upload=$fileUpload");
-            // Handle file upload
-            $targetPath = './' . $outputFolder;
-            $uploadedFile = $targetPath . '/' . $fileName;
+        // else if (!empty($fileUpload)) {
+        //     error_log("Input: $fileName upload=$fileUpload");
+        //     // Handle file upload
+        //     $targetPath = './' . $outputFolder;
+        //     $uploadedFile = $targetPath . '/' . $fileName;
     
-            if (!move_uploaded_file($_FILES[$fileUpload]['tmp_name'], $uploadedFile)) {
-                echo json_encode(['error' => "Failed to move uploaded file to $fileName"]);
-                exit;
-            }
-        } 
+        //     if (!move_uploaded_file($_FILES[$fileUpload]['tmp_name'], $uploadedFile)) {
+        //         echo json_encode(['error' => "Failed to move uploaded file to $fileName"]);
+        //         exit;
+        //     }
+        // } 
         // Ensure that the file exists if no new content or upload is provided
         else {
             if (!file_exists($filePath)) {
@@ -80,21 +75,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Process each file
-    $inputI1 = processFile($outputFolder, 'I_1.bool', $model_1_init, 'model_1_init_select');
-    $inputI2 = processFile($outputFolder, 'I_2.bool', $model_2_init, 'model_2_init_select');
-    $inputR1 = processFile($outputFolder, 'R_1.bool', $model_1_trans, 'model_1_trans_select');
-    $inputR2 = processFile($outputFolder, 'R_2.bool', $model_2_trans, 'model_2_trans_select');
-    $inputP = processFile($outputFolder, 'P.hq', $p_hq, 'p_hq_select'); 
+    $inputI1 = processFile($outputFolder, 'I_1.bool', $model_1_init);
+    $inputI2 = processFile($outputFolder, 'I_2.bool', $model_2_init);
+    $inputR1 = processFile($outputFolder, 'R_1.bool', $model_1_trans);
+    $inputR2 = processFile($outputFolder, 'R_2.bool', $model_2_trans);
+    $inputP = processFile($outputFolder, 'P.hq', $p_hq); 
 
     #-I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN
 
     $HQ = $outputFolder . '/HQ.qcir';
+    //$inputP = $outputFolder . '/P.hq';
     // Call the first executable and get its output
-    //$commandGen = './bin/genqbf -I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN';
-    //$commandGen = './bin/genqbf -I test2/I_1.bool -R test2/R_1.bool -J test2/I_2.bool -S test2/R_2.bool -P test2/P.hq -k 3 -F AA -f qcir -o test2/HQ.qcir -sem PES -n --fast -new NN';
-    //$commandGen = './bin/genqbf -I test3/I_1.bool -R test3/R_1.bool -J test3/I_2.bool -S test3/R_2.bool -P test3/P.hq -k 3 -F AA -f qcir -o test3/HQ.qcir -sem PES -n --fast -new NN';
+    ///bin/linux/genqbf
     $commandGen = sprintf(
-        './bin/genqbf -I %s -R %s -J %s -S %s -P %s -k %s -F %s -f qcir -o %s -sem %s -n --fast -new %s',
+        $currentDirectory .'/bin/genqbf -I %s -R %s -J %s -S %s -P %s -k %s -F %s -f qcir -o %s -sem %s -n --fast -new %s',
         $inputI1, $inputR1, $inputI2, $inputR2,
         $inputP, $number_k, $quantifier_f, $HQ, 
         $semantics, 'NN'
@@ -112,12 +106,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    error_log("Command output: $genOutput[0]");
+    //error_log("Command output: $genOutput[0]");
     
     // Check if the output file is generated
     if (is_file($outputFile)) {
         // If the file is generated, run the second command
-        $commandQuabs = './bin/quabs ' . escapeshellarg($outputFile);
+        $commandQuabs = $currentDirectory . '/bin/quabs ' . escapeshellarg($outputFile);
         $quabsOutput = [];
         $quabsStatus = null;
         // Execute the quabs command and get its output
