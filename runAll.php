@@ -1,8 +1,5 @@
 <?php
-
-header('Access-Control-Allow-Origin: *');  // Allow requests from all domains (for development)
 header('Access-Control-Allow-Methods: POST');  // Allow POST requests
-header('Content-Type: application/json');  // Set content type to JSON
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
