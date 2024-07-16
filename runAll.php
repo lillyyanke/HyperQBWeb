@@ -81,60 +81,104 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Process each file
     $inputI1 = processFile($outputFolder, 'I_1.bool', $model_1_init);
     $inputI2 = processFile($outputFolder, 'I_2.bool', $model_2_init);
-    $inputR1 = processFile($outputFolder, 'R_1.bool', $model_1_trans);
-    $inputR2 = processFile($outputFolder, 'R_2.bool', $model_2_trans);
-    $inputP = processFile($outputFolder, 'P.hq', $p_hq); 
+    // $inputR1 = processFile($outputFolder, 'R_1.bool', $model_1_trans);
+    // $inputR2 = processFile($outputFolder, 'R_2.bool', $model_2_trans);
+    // $inputP = processFile($outputFolder, 'P.hq', $p_hq); 
+
+    $I1 = $currentDirectory . '/' . $inputI1;
+    $I2 = $currentDirectory . '/' . $inputI2;
+    // $R1 = $currentDirectory . '/' . $inputR1;
+    // $R2 = $currentDirectory . '/' . $inputR2;
+    // $P = $currentDirectory . '/' . $inputP;
 
     #-I test/I_1.bool -R test/R_1.bool -J test/I_2.bool -S test/R_2.bool -P test/P.hq -k 3 -F AA -f qcir -o test/HQ.qcir -sem PES -n --fast -new NN
 
-    $HQ = $outputFolder . '/HQ.qcir';
+    $HQ = $currentDirectory . '/' . $outputFolder . '/HQ.qcir';
     //$inputP = $outputFolder . '/P.hq';
     // Call the first executable and get its output
     ///bin/linux/genqbf
-    $commandGen = sprintf(
-        $currentDirectory .'/bin/genqbf -I %s -R %s -J %s -S %s -P %s -k %s -F %s -f qcir -o %s -sem %s -n --fast -new %s',
-        $inputI1, $inputR1, $inputI2, $inputR2,
-        $inputP, $number_k, $quantifier_f, $HQ, 
-        $semantics, 'NN'
-    );
+
+    // $commandGen = sprintf(
+    //     $currentDirectory .'/bin/genqbf -I %s -R %s -J %s -S %s -P %s -k %s -F %s -f qcir -o %s -sem %s -n --fast -new %s',
+    //     $I1, $R1, $I2, $R2,
+    //     $P, $number_k, $quantifier_f, $HQ, 
+    //     $semantics, 'NN'
+    // );
+
+    $commandGen = $currentDirectory.'/dist/add2 '. $I1 ." " . $I2 . " " .$outputFile;
 
     
     $genOutput = [];
     $genStatus = null;
     error_log("Command: $commandGen");
     exec($commandGen . ' 2>&1' , $genOutput, $genStatus);
-    error_log("Command error: " . implode("\n", $genOutput));
-    if ($genStatus != null) {
-        $result = implode("\n", $genOutput);
-        echo json_encode(['result' => $result]);
-        exit;
+    error_log("Output: " . implode("\n", $genOutput));
+    error_log("Status: $genStatus");
+
+    // if ($genStatus != null) {
+    //     $result = implode("\n", $genOutput);
+    //     echo json_encode(['result' => $result]);
+    //     exit;
+    // }
+    if ($genStatus !== null) {
+        error_log("Status: $genStatus");
+    } else {
+        error_log("Command status not captured.");
     }
 
+    if ($genStatus == 0) {
+            // $result = implode("\n", $quabsOutput);
+            // echo json_encode(['result' => $result]);
+            // exit;
+            // Join the output array into a single string for logging or processing
+            //$quabsOutputString = implode("\n", $qenOutput);
+            //error_log("Second command output:\n" . $quabsOutputString);
+            $result = $genOutput;
+            // Return the output as JSON
+            //echo json_encode(['result' => $quabsOutputString]);
+       }
+        
+    else{
+            $result = "hi";
+        }
+
+        //$result = "hello"; 
     //error_log("Command output: $genOutput[0]");
     
+    
     // Check if the output file is generated
-    if (is_file($outputFile)) {
-        // If the file is generated, run the second command
-        $commandQuabs = $currentDirectory . '/bin/quabs ' . escapeshellarg($outputFile);
-        $quabsOutput = [];
-        $quabsStatus = null;
-        // Execute the quabs command and get its output
-        error_log("Executing second command: $commandQuabs");
-        exec($commandQuabs . ' 2>&1', $quabsOutput, $quabsStatus);
+    // if (is_file($outputFile)) {
+    //     // If the file is generated, run the second command
+    //     $commandQuabs = $currentDirectory . '/bin/quabs ' . escapeshellarg($outputFile);
+    //     $quabsOutput = [];
+    //     $quabsStatus = null;
+    //     // Execute the quabs command and get its output
+    //     error_log("Executing second command: $commandQuabs");
+    //     exec($commandQuabs . ' 2>&1', $quabsOutput, $quabsStatus);
+    //     error_log("status: $quabsStatus");
 
-        if ($quabsStatus != null) {
-            $result = implode("\n", $quabsOutput);
-            echo json_encode(['result' => $result]);
-            exit;
-        }
+    //     if ($quabsStatus == 0) {
+    //         // $result = implode("\n", $quabsOutput);
+    //         // echo json_encode(['result' => $result]);
+    //         // exit;
+    //         // Join the output array into a single string for logging or processing
+    //         $quabsOutputString = implode("\n", $quabsOutput);
+    //         error_log("Second command output:\n" . $quabsOutputString);
+    //         $result = $quabsOutputString;
+    //         // Return the output as JSON
+    //         //echo json_encode(['result' => $quabsOutputString]);
+    //     }
         
-        error_log("Second command output: $quabsOutput");
-        $result = $quabsOutput;
+    //     else{
+    //         $result = "hi";
+    //     }
+        // error_log("Second command output: $quabsOutput");
+        //$result = $quabsOutput;
 
-     } 
-    else {
-        $result = is_null($genOutput) ? 'Error executing command' : 'File not generated';
-    }
+     //} 
+    // else {
+    //     $result = is_null($genOutput) ? 'Error executing command' : 'File not generated';
+    // }
 
     echo json_encode(['result' => $result]);
 }

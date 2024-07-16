@@ -1,8 +1,8 @@
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $modelInput = isset($_POST['modelInput']) ? $_POST['modelInput'] : '';
-    $propertyInput = isset($_POST['propertyInput']) ? $_POST['propertyInput'] : '';
+    $modelInput = isset($_POST['model_1_init']) ? $_POST['model_1_init'] : '';
+    $propertyInput = isset($_POST['model_1_trans']) ? $_POST['model_1_trans'] : '';
 
     // Log inputs for debugging
     error_log("Inputs: model=$modelInput, property=$propertyInput");
